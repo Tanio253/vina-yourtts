@@ -46,7 +46,8 @@ def register_config(model_name: str) -> Coqpit:
         from configs.xtts_config import XttsConfig
 
         config_class = XttsConfig
-    paths = ["TTS.tts.configs", "TTS.vocoder.configs", "TTS.encoder.configs", "TTS.vc.configs"]
+    paths = ["configs", "encoder.configs"]
+    print(model_name)
     for path in paths:
         try:
             config_class = find_module(path, config_name)
