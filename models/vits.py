@@ -1688,7 +1688,7 @@ class Vits(BaseTTS):
     def get_criterion(self):
         """Get criterions for each optimizer. The index in the output list matches the optimizer idx used in
         `train_step()`"""
-        from TTS.tts.layers.losses import (  # pylint: disable=import-outside-toplevel
+        from layers.losses import (  # pylint: disable=import-outside-toplevel
             VitsDiscriminatorLoss,
             VitsGeneratorLoss,
         )
@@ -1737,7 +1737,7 @@ class Vits(BaseTTS):
         """
         import json
 
-        from TTS.tts.utils.text.cleaners import basic_cleaners
+        from utils.text.cleaners import basic_cleaners
 
         self.disc = None
         # set paths
@@ -1777,7 +1777,7 @@ class Vits(BaseTTS):
             samples (Union[List[List], List[Dict]]): Training samples to parse speaker ids for training.
                 Defaults to None.
         """
-        from TTS.utils.audio import AudioProcessor
+        from utils.audio import AudioProcessor
 
         upsample_rate = torch.prod(torch.as_tensor(config.model_args.upsample_rates_decoder)).item()
 
