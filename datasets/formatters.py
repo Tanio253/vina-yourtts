@@ -394,7 +394,7 @@ def brspeech(root_path, meta_file, ignored_speakers=None):
             items.append({"text": text, "audio_file": wav_file, "speaker_name": speaker_id, "root_path": root_path})
     return items
 
-def vivos(root_path, meta_files, wavs_path, ignored_speakers = []):
+def vivos(root_path, meta_files = None, ignored_speakers = []):
     """Vivos dataset
     URL:
     https://huggingface.co/datasets/AILAB-VNUHCM/vivos
