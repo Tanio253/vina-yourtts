@@ -37,6 +37,7 @@ def compute_embeddings(
         c_dataset.formatter = formatter_name
         c_dataset.dataset_name = dataset_name
         c_dataset.path = dataset_path
+        c_dataset.ignored_speakers = []
         if meta_file_train is not None:
             c_dataset.meta_file_train = meta_file_train
         if meta_file_val is not None:
