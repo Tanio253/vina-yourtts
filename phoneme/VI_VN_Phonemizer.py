@@ -5,11 +5,12 @@ from phoneme.vPhon import trans, convert
 import sys, re, io, string, argparse
 from rules import *
 
+_DEF_VN_PUNC = string.punctuation
 class VI_VN_Phonemizer(BasePhonemizer):
 
     language = "vi-vn"
 
-    def __init__(self, punctuations=_DEF_JA_PUNCS, keep_puncs=True, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, punctuations=_DEF_VN_PUNC, keep_puncs=False, **kwargs):  # pylint: disable=unused-argument
         super().__init__(self.language, punctuations=punctuations, keep_puncs=keep_puncs)
         self.chao = False
         self.delimit = ''
@@ -67,7 +68,7 @@ class VI_VN_Phonemizer(BasePhonemizer):
         return compound
 
     def phonemize(self, text: str, separator="|", language=None) -> str:
-        """Custom phonemize for JP_JA
+        """Custom phonemize for VI_VN
 
         Skip pre-post processing steps used by the other phonemizers.
         """

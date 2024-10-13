@@ -22,7 +22,7 @@ torch.set_num_threads(24)
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 # Name of the run for the Trainer
-RUN_NAME = "YourTTS-VN-VCTK"
+RUN_NAME = "YourTTS-VN-VIVOS"
 
 # Path where you want to save the models outputs (configs, checkpoints and tensorboard logs)
 OUT_PATH = os.path.dirname(os.path.abspath(__file__))  # "/raid/coqui/Checkpoints/original-YourTTS/"
@@ -34,7 +34,7 @@ RESTORE_PATH = None  # "/root/.local/share/tts/tts_models--multilingual--multi-d
 SKIP_TRAIN_EPOCH = False
 
 # Set here the batch size to be used in training and evaluation
-BATCH_SIZE = 64
+BATCH_SIZE = 128
 
 # Training Sampling rate and the target sampling rate for resampling the downloaded dataset (Note: If you change this you might need to redownload the dataset !!)
 # Note: If you add new datasets, please make sure that the dataset sampling rate and this parameter are matching, otherwise resample your audios
@@ -44,37 +44,24 @@ SAMPLE_RATE = 16000
 MAX_AUDIO_LEN_IN_SECONDS = 10
 
 ### Download VCTK dataset
-VCTK_DOWNLOAD_PATH = os.path.join(CURRENT_PATH, "VCTK")
+VIVOS_DOWNLOAD_PATH = '/kaggle/input/vina-vivos/vivos'
 # Define the number of threads used during the audio resampling
-NUM_RESAMPLE_THREADS = 10
-# Check if VCTK dataset is not already downloaded, if not download it
 
 
 # init configs
-vctk_config = BaseDatasetConfig(
-    formatter="vctk",
-    dataset_name="vctk",
+vivos_config = BaseDatasetConfig(
+    formatter="vivos",
+    dataset_name="vivos",
     meta_file_train="",
     meta_file_val="",
-    path=VCTK_DOWNLOAD_PATH,
-    language="en",
-    ignored_speakers=[
-        "p261",
-        "p225",
-        "p294",
-        "p347",
-        "p238",
-        "p234",
-        "p248",
-        "p335",
-        "p245",
-        "p326",
-        "p302",
-    ],  # Ignore the test speakers to full replicate the paper experiment
+    path=VIVOS_DOWNLOAD_PATH,
+    language="vi-vn",
+    ignored_speakers = []
+      # Ignore the test speakers to full replicate the paper experiment
 )
 
 # Add here all datasets configs, in our case we just want to train with the VCTK dataset then we need to add just VCTK. Note: If you want to add new datasets, just add them here and it will automatically compute the speaker embeddings (d-vectors) for this new dataset :)
-DATASETS_CONFIG_LIST = [vctk_config]
+DATASETS_CONFIG_LIST = [vivos_config]
 
 ### Extract speaker embeddings
 SPEAKER_ENCODER_CHECKPOINT_PATH = (
@@ -82,29 +69,9 @@ SPEAKER_ENCODER_CHECKPOINT_PATH = (
 )
 SPEAKER_ENCODER_CONFIG_PATH = "https://github.com/coqui-ai/TTS/releases/download/speaker_encoder_model/config_se.json"
 
-D_VECTOR_FILES = []  # List of speaker embeddings/d-vectors to be used during the training
+D_VECTOR_FILES = [os.path.join(CURRENT_PATH, "data", "speakers.pth")]  # List of speaker embeddings/d-vectors to be used during the training
 
 # Iterates all the dataset configs checking if the speakers embeddings are already computated, if not compute it
-for dataset_conf in DATASETS_CONFIG_LIST:
-    # Check if the embeddings weren't already computed, if not compute it
-    embeddings_file = os.path.join(dataset_conf.path, "speakers.pth")
-    if not os.path.isfile(embeddings_file):
-        print(f">>> Computing the speaker embeddings for the {dataset_conf.dataset_name} dataset")
-        compute_embeddings(
-            SPEAKER_ENCODER_CHECKPOINT_PATH,
-            SPEAKER_ENCODER_CONFIG_PATH,
-            embeddings_file,
-            old_speakers_file=None,
-            config_dataset_path=None,
-            formatter_name=dataset_conf.formatter,
-            dataset_name=dataset_conf.dataset_name,
-            dataset_path=dataset_conf.path,
-            meta_file_train=dataset_conf.meta_file_train,
-            meta_file_val=dataset_conf.meta_file_val,
-            disable_cuda=False,
-            no_eval=False,
-        )
-    D_VECTOR_FILES.append(embeddings_file)
 
 
 # Audio config used in training.
@@ -141,9 +108,9 @@ config = VitsConfig(
     run_name=RUN_NAME,
     project_name="YourTTS",
     run_description="""
-            - Original YourTTS trained using VCTK dataset
+            - Original YourTTS trained using VIVOS dataset
         """,
-    dashboard_logger="tensorboard",
+    dashboard_logger="wandb",
     logger_uri=None,
     audio=audio_config,
     batch_size=BATCH_SIZE,
@@ -166,7 +133,7 @@ config = VitsConfig(
     add_blank=True,
     text_cleaner="multilingual_cleaners",
     characters=CharactersConfig(
-        characters_class="TTS.tts.models.vits.VitsCharacters",
+        characters_class="models.vits.VitsCharacters",
         pad="_",
         eos="&",
         bos="*",
@@ -184,38 +151,6 @@ config = VitsConfig(
     cudnn_benchmark=False,
     max_audio_len=SAMPLE_RATE * MAX_AUDIO_LEN_IN_SECONDS,
     mixed_precision=False,
-    test_sentences=[
-        [
-            "It took me quite a long time to develop a voice, and now that I have it I'm not going to be silent.",
-            "VCTK_p277",
-            None,
-            "en",
-        ],
-        [
-            "Be a voice, not an echo.",
-            "VCTK_p239",
-            None,
-            "en",
-        ],
-        [
-            "I'm sorry Dave. I'm afraid I can't do that.",
-            "VCTK_p258",
-            None,
-            "en",
-        ],
-        [
-            "This cake is great. It's so delicious and moist.",
-            "VCTK_p244",
-            None,
-            "en",
-        ],
-        [
-            "Prior to November 22, 1963.",
-            "VCTK_p305",
-            None,
-            "en",
-        ],
-    ],
     # Enable the weighted sampler
     use_weighted_sampler=True,
     # Ensures that all speakers are seen in the training batch equally no matter how many samples each speaker has
