@@ -412,7 +412,7 @@ def vivos(root_path, wavs_path, ignored_speakers = []):
         for line in lines:
             file_name, text = line.split(" ", 1)
             spk, _ = file_name.split("_")
-            audio_file = os.path.join(root_path, 'train', 'waves', spk, file_name, f".{file_ext}")
+            audio_file = os.path.join(root_path, 'train', 'waves', spk, file_name + f".{file_ext}")
             if os.path.exists(audio_file):
                 items.append({'text': text, 'audio_file': audio_file, "speaker_name": "VIVOS" + spk, "root_path": root_path})
             else:
