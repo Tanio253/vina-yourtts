@@ -424,7 +424,7 @@ def vivos(root_path, meta_files = None, ignored_speakers = []):
         for line in lines:
             file_name, text = line.split(" ", 1)
             spk, _ = file_name.split("_")
-            audio_file = os.path.join(root_path, 'test', 'waves', spk, file_name, f".{file_ext}")
+            audio_file = os.path.join(root_path, 'test', 'waves', spk, file_name + f".{file_ext}")
             if spk in ignored_speakers:
                 continue
             if os.path.exists(audio_file):
