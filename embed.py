@@ -16,6 +16,7 @@ vivos_config = BaseDatasetConfig(
     meta_file_val="",
     path=VIVOS_DOWNLOAD_PATH,
     language="vi",
+    ignored_speakers = []
       # Ignore the test speakers to full replicate the paper experiment
 )
 
