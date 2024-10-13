@@ -47,7 +47,6 @@ def register_config(model_name: str) -> Coqpit:
 
         config_class = XttsConfig
     paths = ["configs", "encoder.configs"]
-    print(model_name)
     for path in paths:
         try:
             config_class = find_module(path, config_name)
