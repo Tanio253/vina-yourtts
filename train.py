@@ -179,7 +179,12 @@ train_samples, eval_samples = load_tts_samples(
 
 # Init the model
 model = Vits.init_from_config(config)
+model.load_state_dict(torch.load('/kaggle/input/best_model_17484/pytorch/default/1/best_model_17484.pth', map_location= torch.device('cpu'))['model'])
+model.train()
 
+# If you're using a GPU
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model.to(device)
 # Init the trainer and 🚀
 trainer = Trainer(
     TrainerArgs(restore_path=RESTORE_PATH, skip_train_epoch=SKIP_TRAIN_EPOCH),

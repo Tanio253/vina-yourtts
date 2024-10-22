@@ -879,6 +879,7 @@ class Vits(BaseTTS):
             if sid.ndim == 0:
                 sid = sid.unsqueeze_(0)
         if "d_vectors" in aux_input and aux_input["d_vectors"] is not None:
+            # print(aux_input["d_vectors"])
             g = F.normalize(aux_input["d_vectors"]).unsqueeze(-1)
             if g.ndim == 2:
                 g = g.unsqueeze_(0)
@@ -1121,6 +1122,8 @@ class Vits(BaseTTS):
         if self.args.use_language_embedding and lid is not None:
             lang_emb = self.emb_l(lid).unsqueeze(-1)
 
+        # print(x_lengths.shape)
+        # print(x.shape)
         x, m_p, logs_p, x_mask = self.text_encoder(x, x_lengths, lang_emb=lang_emb)
 
         if durations is None:
